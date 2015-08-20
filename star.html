@@ -7,22 +7,19 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <head>
     <body>
-        <div class="header">
+        <div class="content">
             <p>FEELING A LITTLE UNAPPRECIATED?<br>
             ALL THAT HARD WORK AND NO RECOGNITION?<br><br>
-
-            LETS SEE IF YOU'RE A STAR...<br><br>
-
             GIVE US YOUR GITHUB REPOSITORY AND WE'LL KNOW.</p>
 
             <br>
-
-            <?php
-                echo("<form action=\"yes.php\" method=\"post\">" .
-                    "<input style=\"width:75%;\" type=\"text\" name=\"repository\" value=\"http://github.com/your/repository\">" .
-                    "<input type=\"submit\" value=\"Send\">" .
-                    "</form>");
-            ?>        
+            LETS SEE IF YOU'RE A STAR...
+            <br>
+       
+            <form action="yes.php" method="post">
+                <input style="width:75%; line-height:14px;\" type="text" name="repository" value="http://github.com/your/repository.git">
+                <input type="submit" value="Send">
+            </form>
         </div>
 
         <div style="width:100%">
