@@ -4,6 +4,11 @@
 use `ensisoftcom`;
 
 CREATE TABLE `stars` (
-    `visitor` VARCHAR(255),
-    `repository` VARCHAR(255)
+    `id`         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `visitor`    VARCHAR(255),
+    `repository` VARCHAR(255),
+    `date`       TIMESTAMP DEFAULT NOW(),
+    PRIMARY KEY (`id`)
     );
+
+ALTER TABLE stars ADD CONSTRAINT UNIQUE cRepo(repository);

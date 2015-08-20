@@ -6,13 +6,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <head>
     <body>
-        <div class="header">
-            <p>YES, YOU ARE A STAR!<br>
-            CONGRATULATIONS :)<br><br><br>
-            </p>
-
-            <br>
-
+        <div class="content">
             <?php
                 include("database.php");
 
@@ -20,42 +14,72 @@
                 {
                     if (isset($str))
                         return "'" . mysql_real_escape_string(strip_tags($str)) . "'";
-                    return "NULL";
+                    return $str;
                 }
                 function get_visitor_host()
                 {
-                  $ip = getenv("HTTP_CLIENT_IP");
-                  if (strlen($ip) == 0)
-                  {
-                      $ip = getenv("HTTP_X_FORWARDED_FOR");
-                      if (strlen($ip) == 0)
-                          $ip = getenv("REMOTE_ADDR");
-                  }
-                  if (strlen($ip))
-                      return gethostbyaddr($ip);
-                  return "unknown";                    
+                    $ip = getenv("HTTP_CLIENT_IP");
+                    if (strlen($ip) == 0)
+                    {
+                        $ip = getenv("HTTP_X_FORWARDED_FOR");
+                        if (strlen($ip) == 0)
+                            $ip = getenv("REMOTE_ADDR");
+                    }
+                    if (strlen($ip))
+                        return gethostbyaddr($ip);
+                    return "unknown";                    
                 }
 
-                $repository = sql_string($_REQUEST['repository']);
-                $visitor    = sql_string(get_visitor_host());
+                function check_repository($repository)
+                {
+                    $ret = preg_match('#^https?://github\.com/[a-z]+/[a-z]+\.git#', $repository);
+                    if ($ret == 0)
+                        return 0;
+                    $headers = @get_headers($repository);
 
-                $insert = "INSERT INTO stars (visitor, repository) VALUES ($visitor, $repository)";
-                mysql_query($insert, $db) or 
-                    die("ooops the database has died.");
+                    foreach ($headers as $header) {
+                        if (strcasecmp($header, "HTTP/1.1 404 Not Found") == 0)
+                            return 0;
+                    }
+                    return 1;
+                }
+
+                $repository = $_REQUEST['repository'];
+
+
+                if (isset($repository))
+                {
+                    if (check_repository($repository) == 0)
+                        die("$repository is not a valid GitHub repository... :(");
+
+                    $repository = sql_string($repository);
+                    $visitor    = sql_string(get_visitor_host());
+
+                    $insert = "INSERT INTO stars (visitor, repository) VALUES ($visitor, $repository)";
+                    mysql_query($insert, $db);
+
+                    // http://dev.mysql.com/doc/refman/5.5/en/error-messages-server.html
+                    // 1062 for duplicate entry.
+                    if (mysql_errno() != 1062)
+                      die("ooops the database has died.");
+
+                    echo("<p>YES, YOU ARE A STAR!<br>" .
+                         "CONGRATULATIONS :)<br><br><br></p>");
+
+                    echo("<img src=\"star.png\">");
+                }
 
                 $select  = "SELECT repository FROM stars ORDER BY RAND() LIMIT 1";
                 $records = mysql_query($select, $db) or
-                    die("oops the database has died...");
+                  die("oops the database has died...");
 
                 $row = mysql_fetch_array($records);
                 $url = $row['repository'];
 
-                echo("Now.. why don't you take a few minutes and visit <br><br>" .
-                  "<a href=\"$url\">$url</a>");
-
+                echo("<br><br>Now.. why don't you take a few minutes and visit <br><br>" .
+                    "<a href=\"$url\">$url</a>");
 
                 @mysql_close($db);
-
             ?>        
         </div>
 
