@@ -1,0 +1,26 @@
+
+* {margin: 0; padding: 0;}
+
+@font-face {
+    font-family: gothic;
+    src: url(leaguegothic-regular-webfont.ttf);
+}
+
+body {
+    background-color: #19232c;
+}
+
+div.header {
+    font-size: 24pt;
+    font-family: gothic;
+    position: absolute;
+    top: 200px;
+    width: 50%;
+    left: 25%;
+    color: #b93f3a;    
+}
+
+a {
+    text-decoration: none;
+    color: silver;
+}
