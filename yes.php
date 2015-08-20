@@ -27,7 +27,7 @@
 
     function check_repository($repository)
     {
-        $ret = preg_match('#^https?://github\.com/[a-z]+/[a-z]+\.git#', $repository);
+        $ret = preg_match('#^https?://github\.com/[[:alnum:]-]+/[[:alnum:]-]+\.git#', $repository);
         if ($ret == 0)
             return 0;
         $headers = @get_headers($repository);
@@ -62,7 +62,9 @@
 
             // http://dev.mysql.com/doc/refman/5.5/en/error-messages-server.html
             // 1062 for duplicate entry.
-            if (mysql_errno() != 1062) {
+            $e = mysql_errno();
+
+            if ($e &&  $e != 1062) {
                 oops("ooops the database has died.");
             } else {
                 $msg = $msg . "<p>YES, YOU ARE A STAR!<br>" .
