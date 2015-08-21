@@ -3,6 +3,7 @@
 
     $err='';
     $msg='';
+    $title='Yes You Are!';
 
     function sql_string($str)
     {
@@ -27,7 +28,7 @@
 
     function check_repository($repository)
     {
-        $ret = preg_match('#^https?://github\.com/[[:alnum:]-]+/[[:alnum:]-]+\.git#', $repository);
+        $ret = preg_match('#^https?://github\.com/[[:alnum:]-.]+/[[:alnum:]-.]+\.git#', $repository);
         if ($ret == 0)
             return 0;
         $headers = @get_headers($repository);
@@ -50,6 +51,7 @@
     if (isset($repository))
     {
         if (check_repository($repository) == 0) {
+            $title = "Invalid GitHub Repository";
             oops("$repository is not a valid GitHub repository... :(");
         }
         else
@@ -92,7 +94,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
     <head>
-        <title>Yes You Are!</title>
+         <title>
+         <?php
+            echo $title;          
+         ?>
+         </title>
         <link rel="stylesheet" title="style" type="text/css" href="star.css">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <head>
